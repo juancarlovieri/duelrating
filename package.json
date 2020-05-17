@@ -1,0 +1,14 @@
+{
+  "name": "duel-rating",
+  "version": "1.0.0",
+  "description": "bot for duel rating",
+  "main": "bot.js",
+  "author": "flicker",
+  "dependencies": {
+    "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
+    "discord.js": "^12.2.0",
+    "esm": "^3.2.25",
+    "reverse-iterable-map": "^4.0.4",
+    "winston": "^3.2.1"
+  }
+}
