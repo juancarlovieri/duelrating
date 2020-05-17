@@ -2,8 +2,6 @@ const fs = require('fs');
 var Discord = require('discord.io');
 var logger = require('winston');
 var auth = require('./auth.json');
-var cannel;
-
 var retrieve = {};
 var map = new Map();
 
@@ -17,12 +15,6 @@ fs.readFile('output.json',
         retrieve = JSON.parse(jsonData);
         console.log(retrieve);
         map = new Map(Object.entries(retrieve));
-});
-
-const toMap = ( obj => {
-    var map = new Map();
-    Object.keys ( obj ). forEach (k => { map.set(k, obj[k]) });
-    return map;
 });
 
 
