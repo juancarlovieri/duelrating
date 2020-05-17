@@ -6,12 +6,8 @@ var retrieve = {};
 var map = new Map();
 
 fs.readFile('output.json',
-    // callback function that is called when reading file is done
     function(err, data) { 
-      
         var jsonData = data;
- 
-        // parse json
         retrieve = JSON.parse(jsonData);
         console.log(retrieve);
         map = new Map(Object.entries(retrieve));
@@ -22,11 +18,6 @@ var jsonObj = {};
 
 function parseMap(){
   jsonObj = Object.fromEntries(map);
-  // map.forEach((value, key) => {
-  //   var keys = key.split('.'),
-  //   last = keys.pop();
-  //   keys.reduce((r, a) => r[a] = r[a] || {}, jsonObj)[last] = value;
-  // });
 }
 
 function save(){
@@ -64,10 +55,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
   if (message.substring(0, 1) == '^') {
       var args = message.split(" ");
       switch(args[0]) {
-        // !ping
         case '^hi':
-        // bot.react({});
-          // message.react('711394661624971284');
           bot.sendMessage({
             to: channelID,
             message: 'stfu!'
@@ -146,10 +134,6 @@ bot.on('message', function (user, userID, channelID, message, evt) {
           map.forEach(function printList(values, key){
             ++counter;
             hasil += counter.toString() + '. **' + key + '** ' + values.toString() + '\n'
-          //  bot.sendMessage({
-          //  to: channelID,
-          //  message: counter.toString() + '. **' + key + '** ' + values.toString()
-          // });
          });
           if(hasil == ''){
             bot.sendMessage({
