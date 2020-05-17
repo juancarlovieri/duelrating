@@ -377,7 +377,7 @@ bot.on('message', message => {
         //   const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'pikatanoh');
         //   message.react(emoji);
         // }
-        if(cur === "queueforces" || cur.substr(0, 7).toLowerCase() === "unrated" || cur.toLowerCase() === "ngebug" || cur === ":notstonks:"){
+        if(cur.toLowerCase() === "queueforces" || cur.substr(0, 7).toLowerCase() === "unrated" || cur.toLowerCase() === "ngebug" || cur === ":notstonks:"){
           const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'notstonks');
           message.react(emoji);
         }
