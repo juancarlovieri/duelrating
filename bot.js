@@ -66,7 +66,7 @@ logger.add(new logger.transports.Console, {
 logger.level = 'debug';
 
 var bot = new Discord.Client();
-bot.login('NzExMjMxMTM3NTM1NDkyMTQ3.XsF2hQ.-NEDaRKzlWuR-W2N94Qtb1TnC98');
+bot.login(auth.token);
 
 bot.on('ready', function (evt) {
   logger.info('Connected');
