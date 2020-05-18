@@ -2,6 +2,7 @@ auth.json
 .DS_Store
 node_modules/
 *.sublime-*
+*.code-*
 *.log
 build/
 reverse-iterable-map.js

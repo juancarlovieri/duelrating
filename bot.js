@@ -9,19 +9,21 @@ var auth = require('./auth.json');
 var retrieve = {};
 var map = new Map();
 
-function printStudent(name, channel){
+function printStudent(name){
   // console.log(channel);
-  var hasil = ``;
-  hasil += `**${name._cn6ca}**\n`
+  var hasil = '';
+  // var hasil = [name._cn6ca, name.a, name.b, name.c, name.d, name.e, name.total];
+  // hasil += `__**${name._cn6ca}**__\n`
   hasil += `**A**: ${name.a}\n`
   hasil += `**B**: ${name.b}\n`
   hasil += `**C**: ${name.c}\n`
   hasil += `**D**: ${name.d}\n`
   hasil += `**E**: ${name.e}\n`
   hasil += `**TOTAL**: ${name.total}\n`
-  hasil += '----------------------------------------\n';
-  bot.channels.cache.get(channel.id).send(hasil);
+  // hasil += '----------------------------------------\n';
+  // bot.channels.cache.get(channel.id).send(hasil);
   // console.log(`Name: ${name._cn6ca}`);
+  return hasil;
 }
 
 async function accessSpreadsheet(channel){
@@ -29,28 +31,52 @@ async function accessSpreadsheet(channel){
   await promisify(doc.useServiceAccountAuth)(creds);
   const info = await promisify(doc.getInfo)();
   const sheet = info.worksheets[0];
+  console.log(info.title);
   console.log(`Title: ${sheet.title}, Rows: ${sheet.rowCount}`);
   const rows = await promisify(sheet.getRows)({
     offset: 1
   });
+  var arr = [];
+  var nama = [];
   rows.forEach(row => {
   // console.log(row);
-    printStudent(row, channel);
+    nama[nama.length] = row._cn6ca;
+    arr[arr.length] = printStudent(row);
+  });
+  bot.channels.cache.get(channel.id).send({embed: {
+    color: 16764006,
+    author: {
+      name: info.title,
+      icon_url: "https://cdn.discordapp.com/icons/688018099584237610/aaea71cdce8f697de559185cac6b4ced.png?size=256"
+    },
+    title: 'Ayo dukung tim favorit kalian!',
+    fields: [{
+      name: 'tim ' + nama[0],
+      value: arr[0]
+    },
+    {
+      name: "tim " + nama[1],
+      value: arr[1]
+    }],
+    timestamp: new Date(),
+    footer: {
+      text: "By Vieri Corp.™"
+    }
+  }
   });
 }
 
 function start(){
-  fs.readFile('output.json',
-    // callback function that is called when reading file is done
-    function(err, data) { 
-      
-        var jsonData = data;
- 
-        // parse json
-        retrieve = JSON.parse(jsonData);
-        console.log(retrieve);
-        map = new Map(Object.entries(retrieve));
-    });
+  var obj = JSON.parse(fs.readFileSync("output.json", 'utf8'));
+  map = new Map(Object.entries(obj));
+  bot.user.setActivity('prabowo', { type: 'WATCHING' });
+  // fs.readFile('output.json',
+  //   // callback function that is called when reading file is done
+  //   function(err, data) { 
+  //       var obj = JSON.parse(data);
+  //       console.log(obj);
+  //       map = new Map(Object.entries(obj));
+  //   });
 }
 var jsonObj = {};
 
@@ -67,8 +93,9 @@ function sort(){
 function save(){
   sort();
   parseMap();
+  console.log(jsonObj);
   var jsonContent = JSON.stringify(jsonObj);
-  fs.writeFile("output.json", jsonContent, 'utf8', function (err) {
+  fs.writeFileSync("output.json", jsonContent, 'utf8', function (err) {
     if (err) {
       console.log("An error occured while writing JSON jsonObj to File.");
       return console.log(err);
@@ -93,8 +120,11 @@ bot.on('ready', bot => {
 });
 
 function newHist(name, array){
-  var jsonContent = JSON.stringify(array);
-  fs.writeFile("history/" + name + ".json", jsonContent, 'utf8', function(err){
+  var test = {}
+  test.a = 'test';
+  test.b = array;
+  var jsonContent = JSON.stringify(test);
+  fs.writeFileSync("history/" + name + ".json", jsonContent, 'utf8', function(err){
     if(err){
       console.log("An error occured while writing JSON jsonObj to File.");
       return console.log(err);
@@ -125,7 +155,8 @@ bot.on('message', message => {
           }
           switch(map.has(args[1])){
             case true: 
-              var arr = JSON.parse(fs.readFileSync("history/" + args[1] + ".json", 'utf8'));
+              var data = fs.readFileSync("history/" + args[1] + ".json", 'utf8')
+              var arr = JSON.parse(data).b;
               arr[arr.length] = parseInt(args[2], 10) + arr[arr.length - 1];
               newHist(args[1], arr);
               map.set(args[1], map.get(args[1]) + parseInt(args[2], 10));
@@ -137,7 +168,27 @@ bot.on('message', message => {
               map.set(args[1], parseInt(args[2], 10));
               break;
           }
-          message.channel.send('added **' + args[2] + '** to **' + args[1] + '**\nnew rating: **' + map.get(args[1]).toString() + '**');
+          message.channel.send({embed: {
+            color: 16764006,
+            author: {
+              name: args[1],
+              icon_url: "https://cdn.discordapp.com/icons/688018099584237610/aaea71cdce8f697de559185cac6b4ced.png?size=256"
+            },
+            fields: [{
+              name: "delta",
+              value: '+' + args[2]
+            },
+            {
+              name:"new rating",
+              value: map.get(args[1]).toString()
+            },
+            ],
+            timestamp: new Date(),
+            footer: {
+              text: "By Vieri Corp.™"
+            }
+          }
+          });
           save();
           break;
         case '^notstonks':
@@ -150,19 +201,35 @@ bot.on('message', message => {
             message.channel.send('enter a positive integer!');
             break;
           }
-          switch(map.has(args[1])){
-            case true:
-              var arr = JSON.parse(fs.readFileSync("history/" + args[1] + ".json", 'utf8'));
-              // console.log(arr);
-              arr[arr.length] = arr[arr.length - 1] - parseInt(args[2], 10);
-              newHist(args[1], arr);
-              map.set(args[1], map.get(args[1]) - parseInt(args[2], 10));
-              message.channel.send('decreased **' + args[2] + '** from **' + args[1] + '**\nnew rating: **' + map.get(args[1]).toString() + '**');
-              break;
-            case false:
-              message.channel.send('**' + args[1] + '** not found');
-              break;
+          if(map.has(args[1]) == 0){
+            message.channel.send('**' + args[1] + '** not found');
+            break;
           }
+          var arr = JSON.parse(fs.readFileSync("history/" + args[1] + ".json", 'utf8')).b;
+          arr[arr.length] = arr[arr.length - 1] - parseInt(args[2], 10);
+          newHist(args[1], arr);
+          map.set(args[1], map.get(args[1]) - parseInt(args[2], 10));
+          message.channel.send({embed: {
+            color: 16764006,
+            author: {
+              name: args[1],
+              icon_url: "https://cdn.discordapp.com/icons/688018099584237610/aaea71cdce8f697de559185cac6b4ced.png?size=256"
+            },
+            fields: [{
+              name: "delta",
+              value: '-' + args[2]
+            },
+            {
+              name:"new rating",
+              value: map.get(args[1]).toString()
+            },
+            ],
+            timestamp: new Date(),
+            footer: {
+              text: "By Vieri Corp.™"
+            }
+          }
+          });
           save();
           break;
         case '^rename':
@@ -175,7 +242,7 @@ bot.on('message', message => {
             message.channel.send('**' + args[1] + '** not found');
             break;
           }
-          var arr = JSON.parse(fs.readFileSync("history/" + args[1] + ".json", 'utf8'));
+          var arr = JSON.parse(fs.readFileSync("history/" + args[1] + ".json", 'utf8')).b;
           var skor = map.get(args[1]);
           fs.unlinkSync("history/" + args[1] + ".json");
           map.delete(args[1]);
@@ -189,14 +256,40 @@ bot.on('message', message => {
             message.channel.send('sorry, I didn\'t get that, type ^help to see the commands');
             break;
           }
-          switch(map.has(args[1])){
-            case true:
-              message.channel.send('**' + args[1] + '**\'s rating is ' + map.get(args[1]).toString());
-              break;
-            case false:
-               message.channel.send('**' + args[1] + '** not found');
-              break;
+          var hasil = "";
+          if(map.has(args[1]) == false){
+             message.channel.send('**' + args[1] + '** not found');
+            break;
           }
+          var arr = JSON.parse(fs.readFileSync("history/" + args[1] + ".json", 'utf8')).b;
+          var history = ""; 
+          arr.forEach(
+            function(item, index){
+            history += item.toString() + ' - ';
+          });
+          history = history.substr(0, history.length - 2);
+          message.channel.send({embed: {
+            color: 16764006,
+            author: {
+              name: args[1],
+              icon_url: "https://cdn.discordapp.com/icons/688018099584237610/aaea71cdce8f697de559185cac6b4ced.png?size=256"
+            },
+            title: 'user info',
+            fields: [{
+              name: "current rating",
+              value: map.get(args[1]).toString()
+            },
+            {
+              name: "History",
+              value: history
+            },
+            ],
+            timestamp: new Date(),
+            footer: {
+              text: "By Vieri Corp.™"
+            }
+          }
+          });
           break;
         case '^rm':
           if(args.length != 2){
@@ -222,29 +315,28 @@ bot.on('message', message => {
           map.forEach(function printList(values, key){
             ++counter;
             hasil += counter.toString() + '. **' + key + '** ' + values.toString() + '\n'
-         });
+          });
           if(hasil === ""){
             message.channel.send('nothing in the list');
           } else {
-            message.channel.send(hasil);
-          }
-          break;
-        case '^hist':
-          if(args.length != 2){
-            message.channel.send('sorry, I didn\'t get that, type ^help to see the commands');
-            break;
-          }
-          if(map.has(args[1]) === false){ 
-              message.channel.send('**' + args[1] + '** not found');
-              break;
-          }
-          var arr = JSON.parse(fs.readFileSync("history/" + args[1] + ".json", 'utf8'));
-          var hasil = ""; 
-          arr.forEach(
-            function(item, index){
-              hasil += item.toString() + ' ';
+            message.channel.send({embed: {
+              color: 16764006,
+              author: {
+                name: 'Duel Ratings',
+                icon_url: "https://cdn.discordapp.com/icons/688018099584237610/aaea71cdce8f697de559185cac6b4ced.png?size=256"
+              },
+              title: "Top of the leaderboard",
+              fields: [{
+                name: "Sorted descendingly by rating",
+                value: hasil
+              }],
+              timestamp: new Date(),
+              footer: {
+                text: "By Vieri Corp.™"
+              }
+            }
             });
-          message.channel.send(hasil);
+          }
           break;
         case '^help':
           var hasil = '';
@@ -252,10 +344,10 @@ bot.on('message', message => {
           hasil += '**^hi** to say hi\n';
           // hasil += '**^stonks <username> <score>** to add <score> to <username> => only admins\n';
           // hasil += '**^notstonks <username> <score>** to decrease <score> from <username> => only admins\n';
-          hasil += '**^get <username>** to get <username>\'s rating\n';
+          hasil += '**^get <username>** to get <username>\'s rating and its history\n';
           // hasil += '**^rm <username>** to remove <username> from the participant\'s list => only admins\n';
           hasil += '**^top** to list all participants with its ratings sorted descendingly\n';
-          hasil += '**^hist <username>** to get <username>\'s rating history\n';
+          // hasil += '**^hist <username>** to get <username>\'s rating history\n';
           hasil += '**^help** to be stupid\n';
           message.channel.send(hasil);
           break;
