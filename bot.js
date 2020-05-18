@@ -1,3 +1,5 @@
+let request = require(`request`);
+var plotly = require('plotly')('juancarlovieri', "cFGB4qzuLQc1dTw67Z19");
 const GoogleSpreadsheet = require('google-spreadsheet');
 const {promisify} = require('util');
 const fs = require('fs');
@@ -6,6 +8,16 @@ var logger = require('winston');
 var creds = require('./Duel rating-3d9d81aa83a7.json')
 var auth = require('./auth.json');
 
+function download(uri, filename, callback){
+  request.head(uri, function(err, res, body){
+    console.log('content-type:', res.headers['content-type']);
+    console.log('content-length:', res.headers['content-length']);
+    request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
+  });
+}
+
+
+var hellos = ["hullo orz!", "hellaw", "how are you?", "howdy", "how do ye?", "piye kabare"];
 var retrieve = {};
 var map = new Map();
 
@@ -139,9 +151,11 @@ bot.on('message', message => {
       switch(args[0]) {
         // !ping
         case '^hi':
-          const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'notstonks');
+          const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'dascohai');
           message.react(emoji);
-          message.channel.send('stfu!');
+          var min = 0;
+          var max = 6;
+          message.channel.send(hellos[Math.floor(Math.random() * (+max - +min)) + +min]);
           break;
         case '^stonks':
           if(args.length != 3){
@@ -190,6 +204,41 @@ bot.on('message', message => {
           }
           });
           save();
+          break;
+        case '^graph':
+          if(args.length != 2){
+            message.channel.send('sorry, I didn\'t get that, type ^help to see the commands');
+            break;
+          }
+          if(map.has(args[1]) == 0){
+            message.channel.send("**" + args[1] * "** not found");
+            break;
+          }
+          console.log("tes");
+          var arr = JSON.parse(fs.readFileSync("history/" + args[1] + ".json", 'utf8')).b;
+          console.log(arr);
+          var trace1 = {
+            x: [],
+            y: [],
+            type: "scatter"
+          };
+          trace1.y = arr;
+          for(var i = 1; i < arr.length + 1; i++){
+            trace1.x[trace1.x.length] = i * 10;
+          }
+          var data = [trace1];
+          var graphOptions = {filename: args[1], fileopt: "overwrite"};
+          plotly.plot(data, graphOptions, function (err, msg) {
+            console.log(msg);
+            download(msg.url + '.jpeg', 'display.png', function(){
+              message.channel.send('**' + args[1] + '**\'s graph', {
+                files:[
+                  "display.png"
+                ]
+              });
+            });
+          });
+          
           break;
         case '^notstonks':
           if(args.length != 3){
@@ -345,9 +394,11 @@ bot.on('message', message => {
           // hasil += '**^stonks <username> <score>** to add <score> to <username> => only admins\n';
           // hasil += '**^notstonks <username> <score>** to decrease <score> from <username> => only admins\n';
           hasil += '**^get <username>** to get <username>\'s rating and its history\n';
+          hasil += '**^graph <username>** to get <username>\'s rating graph\n';
           // hasil += '**^rm <username>** to remove <username> from the participant\'s list => only admins\n';
           hasil += '**^top** to list all participants with its ratings sorted descendingly\n';
           // hasil += '**^hist <username>** to get <username>\'s rating history\n';
+          hasil += '**^score** to see currently running duel scoreboard\n';
           hasil += '**^help** to be stupid\n';
           message.channel.send(hasil);
           break;
