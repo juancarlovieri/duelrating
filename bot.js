@@ -119,7 +119,7 @@ bot.on('message', message => {
               map.set(args[1], map.get(args[1]) + parseInt(args[2], 10));
               break;
             case false:
-              var temp = [0, parseInt(args[2], 10)];
+              var temp = [parseInt(args[2], 10)];
               // console.log(temp);
               newHist(args[1], temp);
               map.set(args[1], parseInt(args[2], 10));
@@ -148,6 +148,24 @@ bot.on('message', message => {
               break;
           }
           save();
+          break;
+        case '^rename':
+          if(args.length != 3){
+            message.channel.send('sorry, I didn\'t get that, type ^help to see the commands');
+            break;
+          }
+          if(map.has(args[1]) == false){
+            message.channel.send('**' + args[1] + '** not found');
+            break;
+          }
+          var arr = JSON.parse(fs.readFileSync("history/" + args[1] + ".json", 'utf8'));
+          var skor = map.get(args[1]);
+          fs.unlinkSync("history/" + args[1] + ".json");
+          map.delete(args[1]);
+          newHist(args[2], arr);
+          map.set(args[2], skor);
+          save();
+          message.channel.send('renamed **' + args[1] + '** to **' + args[2] + '**');
           break;
         case '^get':
           if(args.length != 2){
@@ -217,7 +235,6 @@ bot.on('message', message => {
               break;
           }
           var arr = JSON.parse(fs.readFileSync("history/" + args[1] + ".json", 'utf8'));
-          console.log(arr);
           var hasil = ""; 
           arr.forEach(
             function(item, index){
