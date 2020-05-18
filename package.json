@@ -5,9 +5,12 @@
   "main": "bot.js",
   "author": "flicker",
   "dependencies": {
+    "chart.js": "^2.9.3",
+    "chartjs-node-canvas": "^3.0.6",
     "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
     "discord.js": "^12.2.0",
     "esm": "^3.2.25",
+    "plotly": "^1.0.6",
     "reverse-iterable-map": "^4.0.4",
     "winston": "^3.2.1"
   }
