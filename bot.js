@@ -19,23 +19,10 @@ function start(){
         map = new Map(Object.entries(retrieve));
     });
 }
-
-const toMap = ( obj => {
-    var map = new Map();
-    Object.keys ( obj ). forEach (k => { map.set(k, obj[k]) });
-    return map;
-});
-
-
 var jsonObj = {};
 
 function parseMap(){
   jsonObj = Object.fromEntries(map);
-  // map.forEach((value, key) => {
-  //   var keys = key.split('.'),
-  //   last = keys.pop();
-  //   keys.reduce((r, a) => r[a] = r[a] || {}, jsonObj)[last] = value;
-  // });
 }
 
 function sort(){
@@ -67,11 +54,9 @@ logger.level = 'debug';
 var bot = new Discord.Client();
 bot.login(auth.token);
 
-bot.on('ready', function (evt) {
-  logger.info('Connected');
-  logger.info('Logged in as: ');
-  logger.info(bot.username + ' - (' + bot.id + ')');
+bot.on('ready', bot => {
   start();
+  console.log('bot ready');
 });
 
 function newHist(name, array){
@@ -83,16 +68,6 @@ function newHist(name, array){
     }
     console.log("saved");
   });
-}
-
-function getHist(name){
-  var temp;
-  fs.readFile("history/" + name + ".json",
-    function(err, data){
-      var jsonData = data;
-      temp = JSON.parse(jsonData);
-    });
-  return temp;
 }
 
 bot.on('message', message => {
@@ -111,6 +86,10 @@ bot.on('message', message => {
             break;
           }
           if(message.channel.id != '711604888370544652'){message.channel.send('wrong channel');break;}
+          if(parseInt(args[2]) <= 0){
+            message.channel.send('enter a positive integer!');
+            break;
+          }
           switch(map.has(args[1])){
             case true: 
               var arr = JSON.parse(fs.readFileSync("history/" + args[1] + ".json", 'utf8'));
@@ -134,6 +113,10 @@ bot.on('message', message => {
             break;
            }
           if(message.channel.id != '711604888370544652'){message.channel.send('wrong channel');break;}
+          if(parseInt(args[2]) <= 0){
+            message.channel.send('enter a positive integer!');
+            break;
+          }
           switch(map.has(args[1])){
             case true:
               var arr = JSON.parse(fs.readFileSync("history/" + args[1] + ".json", 'utf8'));
@@ -154,6 +137,7 @@ bot.on('message', message => {
             message.channel.send('sorry, I didn\'t get that, type ^help to see the commands');
             break;
           }
+          if(message.channel.id != '711604888370544652'){message.channel.send('wrong channel');break;}
           if(map.has(args[1]) == false){
             message.channel.send('**' + args[1] + '** not found');
             break;
@@ -199,19 +183,6 @@ bot.on('message', message => {
               break;
           }
           break;
-        case '^buttom':
-          var counter = 0;
-          var hasil = "";
-          map.forEach(function printList(values, key){
-            ++counter;
-            hasil += counter.toString() + '. **' + key + '** ' + values.toString() + '\n'
-         });
-          if(hasil === ""){
-            message.channel.send('nothing in the list');
-          } else {
-            message.channel.send(hasil);
-          }
-          break;
         case '^top':
           var counter = 0;
           var hasil = "";
@@ -251,6 +222,7 @@ bot.on('message', message => {
           hasil += '**^get <username>** to get <username>\'s rating\n';
           // hasil += '**^rm <username>** to remove <username> from the participant\'s list => only admins\n';
           hasil += '**^top** to list all participants with its ratings sorted descendingly\n';
+          hasil += '**^hist <username>** to get <username>\'s rating history\n';
           hasil += '**^help** to be stupid\n';
           message.channel.send(hasil);
           break;
