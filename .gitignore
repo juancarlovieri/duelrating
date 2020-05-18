@@ -1,5 +1,6 @@
 auth.json
 .DS_Store
+display.png
 node_modules/
 *.sublime-*
 *.code-*
