@@ -1,10 +1,43 @@
+const GoogleSpreadsheet = require('google-spreadsheet');
+const {promisify} = require('util');
 const fs = require('fs');
 var Discord = require('discord.js');
 var logger = require('winston');
+var creds = require('./Duel rating-3d9d81aa83a7.json')
 var auth = require('./auth.json');
 
 var retrieve = {};
 var map = new Map();
+
+function printStudent(name, channel){
+  // console.log(channel);
+  var hasil = ``;
+  hasil += `**${name._cn6ca}**\n`
+  hasil += `**A**: ${name.a}\n`
+  hasil += `**B**: ${name.b}\n`
+  hasil += `**C**: ${name.c}\n`
+  hasil += `**D**: ${name.d}\n`
+  hasil += `**E**: ${name.e}\n`
+  hasil += `**TOTAL**: ${name.total}\n`
+  hasil += '----------------------------------------\n';
+  bot.channels.cache.get(channel.id).send(hasil);
+  // console.log(`Name: ${name._cn6ca}`);
+}
+
+async function accessSpreadsheet(channel){
+  const doc = new GoogleSpreadsheet('1gIqvphDvB5sBNyltdt2v0CkOrQM-QFBykAOsSOG2Txo');
+  await promisify(doc.useServiceAccountAuth)(creds);
+  const info = await promisify(doc.getInfo)();
+  const sheet = info.worksheets[0];
+  console.log(`Title: ${sheet.title}, Rows: ${sheet.rowCount}`);
+  const rows = await promisify(sheet.getRows)({
+    offset: 1
+  });
+  rows.forEach(row => {
+  // console.log(row);
+    printStudent(row, channel);
+  });
+}
 
 function start(){
   fs.readFile('output.json',
@@ -233,6 +266,9 @@ bot.on('message', message => {
           map.clear();
           save();
           message.channel.send('cleared');
+          break;
+        case '^score':
+          accessSpreadsheet(message.channel);
           break;
         default: 
           message.channel.send('sorry, I didn\'t get that, type ^help to see the commands');
