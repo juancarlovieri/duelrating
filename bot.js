@@ -34,7 +34,7 @@ function download(uri, filename, callback){
 }
 
 
-var hellos = ["hullo orz!", "hellaw", "how are you?", "howdy", "how do ye?", "piye kabare"];
+var hellos = ["hullo orz!", "hellaw", "how are you?", "howdy", "how do ye?", "piye kabare", "Sugeng Enjing"];
 var retrieve = {};
 var map = new Map();
 
