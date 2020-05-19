@@ -342,6 +342,7 @@ bot.on('message', message => {
           message.channel.send(hellos[Math.floor(Math.random() * (+max - +min)) + +min]);
           break;
         case '^announce':
+          if(message.channel.id != '574031032936824853')break;
           var peserta = soal.participantone + ' vs ' + soal.participanttwo;
           const vierilogo = new Discord.MessageAttachment('./viericorp.png');
           bot.channels.cache.get('712323110048628746').send({files: [vierilogo], embed: {
