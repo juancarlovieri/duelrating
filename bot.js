@@ -3,14 +3,19 @@ var plotly = require('plotly')('juancarlovieri', "cFGB4qzuLQc1dTw67Z19");
 const GoogleSpreadsheet = require('google-spreadsheet');
 const {promisify} = require('util');
 const fs = require('fs');
+var schedule = require('node-schedule');
 var Discord = require('discord.js');
 var logger = require('winston');
 var creds = require('./Duel rating-3d9d81aa83a7.json')
 var auth = require('./auth.json');
+var soal = require('./soal.json');
 const cool = require('cool-ascii-faces');
+var datetime = new Date();
 const express = require('express');
 const path = require('path');
 const PORT = process.env.PORT || 5000;
+var tminus30min = new Date(soal.year, soal.month, soal.date, parseInt(soal.hour) - 1, parseInt(soal.minute) + 30, soal.second);
+var onContest = new Date(soal.year, soal.month, soal.date, soal.hour, soal.minute, soal.second);
 
 express()
   .use(express.static(path.join(__dirname, 'public')))
@@ -127,6 +132,57 @@ function printStudent(name, message){
       hasil += '**E**: unatempted\n';
       break;
   }
+  switch (`${name.f}`){
+    case 'AC':
+      hasil += `**F**: ${ac}\n`;
+      break;
+    case 'WA':
+      hasil += `**F**: ${wa}\n`;
+      break;
+    case 'TLE':
+      hasil += `**F**: ${tle}\n`;
+      break;
+    case 'RTE':
+      hasil += `**F**: ${rte}\n`;
+      break;
+    default:
+      hasil += '**F**: unatempted\n';
+      break;
+  }
+  switch (`${name.g}`){
+    case 'AC':
+      hasil += `**G**: ${ac}\n`;
+      break;
+    case 'WA':
+      hasil += `**G**: ${wa}\n`;
+      break;
+    case 'TLE':
+      hasil += `**G**: ${tle}\n`;
+      break;
+    case 'RTE':
+      hasil += `**G**: ${rte}\n`;
+      break;
+    default:
+      hasil += '**G**: unatempted\n';
+      break;
+  }
+  switch (`${name.h}`){
+    case 'AC':
+      hasil += `**H**: ${ac}\n`;
+      break;
+    case 'WA':
+      hasil += `**H**: ${wa}\n`;
+      break;
+    case 'TLE':
+      hasil += `**H**: ${tle}\n`;
+      break;
+    case 'RTE':
+      hasil += `**H**: ${rte}\n`;
+      break;
+    default:
+      hasil += '**H**: unatempted\n';
+      break;
+  }
   hasil += `**TOTAL**: ${name.total}\n`;
   // hasil += '----------------------------------------\n';
   // bot.channels.cache.get(channel.id).send(hasil);
@@ -232,7 +288,7 @@ bot.on('ready', bot => {
 
 function newHist(name, array){
   var test = {}
-  test.a = 'test';
+  test.a = "test";
   test.b = array;
   var jsonContent = JSON.stringify(test);
   fs.writeFileSync("history/" + name + ".json", jsonContent, 'utf8', function(err){
@@ -243,6 +299,35 @@ function newHist(name, array){
     console.log("saved");
   });
 }
+
+var reminder = schedule.scheduleJob(tminus30min, function(){
+  const logo = new Discord.MessageAttachment('./viericorp.png');
+  bot.channels.cache.get('712323110048628746').send("Duel dalam satu jam lagi! <@&700622705879416843>");
+});
+
+var outSoal = schedule.scheduleJob(onContest, function(){
+  const logo = new Discord.MessageAttachment('./viericorp.png');
+  bot.channels.cache.get('711604888370544652').send({files: [logo], embed:{
+    color: 16764006,
+    author: {
+      name: 'Soal duel',
+      icon_url: "https://cdn.discordapp.com/icons/688018099584237610/aaea71cdce8f697de559185cac6b4ced.png?size=256"
+    },
+    title: 'IT\'S SHOWTIME',
+    fields: [{
+      name: "\u200b",
+      value: soal.links,
+      inline: true
+    },
+    ],
+    timestamp: new Date(),
+    footer: {
+      icon_url: 'attachment://viericorp.png',
+      text: "Powered By Vieri Corp.™"
+    }
+  }
+  });
+});
 
 bot.on('message', message => {
   if (message.content.substr(0, 1) == '^') {
@@ -255,6 +340,45 @@ bot.on('message', message => {
           var min = 0;
           var max = 6;
           message.channel.send(hellos[Math.floor(Math.random() * (+max - +min)) + +min]);
+          break;
+        case '^announce':
+          var peserta = soal.participantone + ' vs ' + soal.participanttwo;
+          const vierilogo = new Discord.MessageAttachment('./viericorp.png');
+          bot.channels.cache.get('712323110048628746').send({files: [vierilogo], embed: {
+            color: 16764006,
+            author: {
+              name: 'Pengmuman ' + soal.name,
+              icon_url: "https://cdn.discordapp.com/icons/688018099584237610/aaea71cdce8f697de559185cac6b4ced.png?size=256"
+            },
+            fields: [{
+              name: 'Waktu',
+              value: soal.time
+              // value: '+' + args[2]
+            },
+            {
+              name:"Peserta",
+              value: peserta
+            },
+            {
+              name:"Peraturan",
+              value: soal.rules
+            },  
+            {
+              name:"Score Distribution",
+              value: soal.score
+            }, 
+            {
+              name:"\u200b",
+              value: soal.scoreboard
+            }
+            ],
+            timestamp: new Date(),
+            footer: {
+              icon_url: 'attachment://viericorp.png',
+              text: "By Vieri Corp.™"
+            }
+          }
+          });
           break;
         case '^stonks':
           if(args.length != 3){
@@ -289,7 +413,9 @@ bot.on('message', message => {
               icon_url: "https://cdn.discordapp.com/icons/688018099584237610/aaea71cdce8f697de559185cac6b4ced.png?size=256"
             },
             fields: [{
-              name: "delta",
+              name: 'delta',
+              // name: '\u200b',
+              // value: "[b](https://www.youtube.com/watch?v=UfS4mhKpPV0)"
               value: '+' + args[2]
             },
             {
@@ -323,8 +449,8 @@ bot.on('message', message => {
             type: "scatter"
           };
           trace1.y = arr;
-          for(var i = 1; i < arr.length + 1; i++){
-            trace1.x[trace1.x.length] = i * 10;
+          for(var i = 0; i < arr.length; i++){
+            trace1.x[trace1.x.length] = i;
           }
           var data = [trace1];
           var graphOptions = {filename: args[1], fileopt: "overwrite"};
@@ -427,8 +553,8 @@ bot.on('message', message => {
             type: "scatter"
           };
           trace1.y = arr;
-          for(var i = 1; i < arr.length + 1; i++){
-            trace1.x[trace1.x.length] = i * 10;
+          for(var i = 0; i < arr.length; i++){
+            trace1.x[trace1.x.length] = i;
           }
           var data = [trace1];
           var graphOptions = {filename: args[1], fileopt: "overwrite"};
