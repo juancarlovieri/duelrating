@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "bot for duel rating",
   "main": "bot.js",
+  "script.start": "bot.js",
   "author": "flicker",
   "dependencies": {
     "chart.js": "^2.9.3",
