@@ -7,6 +7,18 @@ var Discord = require('discord.js');
 var logger = require('winston');
 var creds = require('./Duel rating-3d9d81aa83a7.json')
 var auth = require('./auth.json');
+const cool = require('cool-ascii-faces');
+const express = require('express');
+const path = require('path');
+const PORT = process.env.PORT || 5000;
+
+express()
+  .use(express.static(path.join(__dirname, 'public')))
+  .set('views', path.join(__dirname, 'views'))
+  .set('view engine', 'ejs')
+  .get('/', (req, res) => res.render('pages/index'))
+  .get('/cool', (req, res) => res.send(cool()))
+  .listen(PORT, () => console.log(`Listening on ${ PORT }`));
 
 function download(uri, filename, callback){
   request.head(uri, function(err, res, body){
@@ -21,24 +33,108 @@ var hellos = ["hullo orz!", "hellaw", "how are you?", "howdy", "how do ye?", "pi
 var retrieve = {};
 var map = new Map();
 
-function printStudent(name){
+function printStudent(name, message){
   // console.log(channel);
   var hasil = '';
   // var hasil = [name._cn6ca, name.a, name.b, name.c, name.d, name.e, name.total];
   // hasil += `__**${name._cn6ca}**__\n`
-  hasil += `**A**: ${name.a}\n`
-  hasil += `**B**: ${name.b}\n`
-  hasil += `**C**: ${name.c}\n`
-  hasil += `**D**: ${name.d}\n`
-  hasil += `**E**: ${name.e}\n`
-  hasil += `**TOTAL**: ${name.total}\n`
+  var ac = message.guild.emojis.cache.find(emoji => emoji.name === "AC");
+  var tle = message.guild.emojis.cache.find(emoji => emoji.name === "TLE");
+  var wa = message.guild.emojis.cache.find(emoji => emoji.name === "WA");
+  var rte = message.guild.emojis.cache.find(emoji => emoji.name === "RE");
+  switch (`${name.a}`){
+    case 'AC':
+      hasil += `**A**: ${ac}\n`;
+      break;
+    case 'WA':
+      hasil += `**A**: ${wa}\n`;
+      break;
+    case 'TLE':
+      hasil += `**A**: ${tle}\n`;
+      break;
+    case 'RTE':
+      hasil += `**A**: ${rte}\n`;
+      break;
+    default:
+      hasil += '**A**: unatempted\n';
+      break;
+  }
+  switch (`${name.b}`){
+    case 'AC':
+      hasil += `**B**: ${ac}\n`;
+      break;
+    case 'WA':
+      hasil += `**B**: ${wa}\n`;
+      break;
+    case 'TLE':
+      hasil += `**B**: ${tle}\n`;
+      break;
+    case 'RTE':
+      hasil += `**B**: ${rte}\n`;
+      break;
+    default:
+      hasil += '**B**: unatempted\n';
+      break;
+  }
+  switch (`${name.c}`){
+    case 'AC':
+      hasil += `**C**: ${ac}\n`;
+      break;
+    case 'WA':
+      hasil += `**C**: ${wa}\n`;
+      break;
+    case 'TLE':
+      hasil += `**C**: ${tle}\n`;
+      break;
+    case 'RTE':
+      hasil += `**C**: ${rte}\n`;
+      break;
+    default:
+      hasil += '**C**: unatempted\n';
+      break;
+  }
+  switch (`${name.d}`){
+    case 'AC':
+      hasil += `**D**: ${ac}\n`;
+      break;
+    case 'WA':
+      hasil += `**D**: ${wa}\n`;
+      break;
+    case 'TLE':
+      hasil += `**D**: ${tle}\n`;
+      break;
+    case 'RTE':
+      hasil += `**D**: ${rte}\n`;
+      break;
+    default:
+      hasil += '**D**: unatempted\n';
+      break;
+  }
+  switch (`${name.e}`){
+    case 'AC':
+      hasil += `**E**: ${ac}\n`;
+      break;
+    case 'WA':
+      hasil += `**E**: ${wa}\n`;
+      break;
+    case 'TLE':
+      hasil += `**E**: ${tle}\n`;
+      break;
+    case 'RTE':
+      hasil += `**E**: ${rte}\n`;
+      break;
+    default:
+      hasil += '**E**: unatempted\n';
+      break;
+  }
+  hasil += `**TOTAL**: ${name.total}\n`;
   // hasil += '----------------------------------------\n';
   // bot.channels.cache.get(channel.id).send(hasil);
   // console.log(`Name: ${name._cn6ca}`);
   return hasil;
 }
 
-async function accessSpreadsheet(channel){
+async function accessSpreadsheet(message){
   const doc = new GoogleSpreadsheet('1gIqvphDvB5sBNyltdt2v0CkOrQM-QFBykAOsSOG2Txo');
   await promisify(doc.useServiceAccountAuth)(creds);
   const info = await promisify(doc.getInfo)();
@@ -53,15 +149,15 @@ async function accessSpreadsheet(channel){
   rows.forEach(row => {
   // console.log(row);
     nama[nama.length] = row._cn6ca;
-    arr[arr.length] = printStudent(row);
+    arr[arr.length] = printStudent(row, message);
   });
-  bot.channels.cache.get(channel.id).send({embed: {
+  message.channel.send({embed: {
     color: 16764006,
     author: {
       name: info.title,
       icon_url: "https://cdn.discordapp.com/icons/688018099584237610/aaea71cdce8f697de559185cac6b4ced.png?size=256"
     },
-    title: 'Ayo dukung tim favorit kalian!',
+    title: 'Ayo dukung tim favorit kalian! Partisipan duel kali ini adalah **' + nama[0] + '** melawan **' + nama[1] + '**',
     fields: [{
       name: 'tim ' + nama[0],
       value: arr[0]
@@ -77,6 +173,7 @@ async function accessSpreadsheet(channel){
   }
   });
 }
+
 
 function start(){
   var obj = JSON.parse(fs.readFileSync("output.json", 'utf8'));
@@ -214,7 +311,6 @@ bot.on('message', message => {
             message.channel.send("**" + args[1] * "** not found");
             break;
           }
-          console.log("tes");
           var arr = JSON.parse(fs.readFileSync("history/" + args[1] + ".json", 'utf8')).b;
           console.log(arr);
           var trace1 = {
@@ -317,27 +413,49 @@ bot.on('message', message => {
             history += item.toString() + ' - ';
           });
           history = history.substr(0, history.length - 2);
-          message.channel.send({embed: {
-            color: 16764006,
-            author: {
-              name: args[1],
-              icon_url: "https://cdn.discordapp.com/icons/688018099584237610/aaea71cdce8f697de559185cac6b4ced.png?size=256"
-            },
-            title: 'user info',
-            fields: [{
-              name: "current rating",
-              value: map.get(args[1]).toString()
-            },
-            {
-              name: "History",
-              value: history
-            },
-            ],
-            timestamp: new Date(),
-            footer: {
-              text: "By Vieri Corp.™"
-            }
+          arr = JSON.parse(fs.readFileSync("history/" + args[1] + ".json", 'utf8')).b;
+          console.log(arr);
+          var trace1 = {
+            x: [],
+            y: [],
+            type: "scatter"
+          };
+          trace1.y = arr;
+          for(var i = 1; i < arr.length + 1; i++){
+            trace1.x[trace1.x.length] = i * 10;
           }
+          var data = [trace1];
+          var graphOptions = {filename: args[1], fileopt: "overwrite"};
+          plotly.plot(data, graphOptions, function (err, msg) {
+            console.log(msg);
+            download(msg.url + '.jpeg', 'display.png', function(){
+              const file = new Discord.MessageAttachment('./display.png');
+              const text = {
+                color: 16764006,
+                author: {
+                  name: args[1],
+                  icon_url: "https://cdn.discordapp.com/icons/688018099584237610/aaea71cdce8f697de559185cac6b4ced.png?size=256"
+                },
+                title: 'user info',
+                fields: [{
+                  name: "current rating",
+                  value: map.get(args[1]).toString()
+                },
+                {
+                  name: "History",
+                  value: history
+                },
+                ],
+                image:{
+                  url: 'attachment://display.png'
+                },  
+                timestamp: new Date(),
+                footer: {
+                  text: "Powered By Vieri Corp.™ ALl Rights Reserved."
+                },
+              };
+              message.channel.send({files: [file], embed: text})
+            });
           });
           break;
         case '^rm':
@@ -411,7 +529,7 @@ bot.on('message', message => {
           message.channel.send('cleared');
           break;
         case '^score':
-          accessSpreadsheet(message.channel);
+          accessSpreadsheet(message);
           break;
         default: 
           message.channel.send('sorry, I didn\'t get that, type ^help to see the commands');
