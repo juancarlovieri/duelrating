@@ -151,7 +151,8 @@ async function accessSpreadsheet(message){
     nama[nama.length] = row._cn6ca;
     arr[arr.length] = printStudent(row, message);
   });
-  message.channel.send({embed: {
+  const vieri = new Discord.MessageAttachment('./viericorp.png');
+  message.channel.send({files: [vieri], embed: {
     color: 16764006,
     author: {
       name: info.title,
@@ -168,7 +169,8 @@ async function accessSpreadsheet(message){
     }],
     timestamp: new Date(),
     footer: {
-      text: "By Vieri Corp.™"
+      icon_url: 'attachment://viericorp.png',
+      text: "Powered By Vieri Corp.™ All Rights Reserved."
     }
   }
   });
@@ -279,7 +281,8 @@ bot.on('message', message => {
               map.set(args[1], parseInt(args[2], 10));
               break;
           }
-          message.channel.send({embed: {
+          const vieri = new Discord.MessageAttachment('./viericorp.png');
+          message.channel.send({files: [vieri], embed: {
             color: 16764006,
             author: {
               name: args[1],
@@ -296,6 +299,7 @@ bot.on('message', message => {
             ],
             timestamp: new Date(),
             footer: {
+              icon_url: 'attachment://viericorp.png',
               text: "By Vieri Corp.™"
             }
           }
@@ -354,7 +358,8 @@ bot.on('message', message => {
           arr[arr.length] = arr[arr.length - 1] - parseInt(args[2], 10);
           newHist(args[1], arr);
           map.set(args[1], map.get(args[1]) - parseInt(args[2], 10));
-          message.channel.send({embed: {
+          const logo = new Discord.MessageAttachment('./viericorp.png');
+          message.channel.send({files: [logo], embed: {
             color: 16764006,
             author: {
               name: args[1],
@@ -371,6 +376,7 @@ bot.on('message', message => {
             ],
             timestamp: new Date(),
             footer: {
+              icon_url: 'attachment://viericorp.png',
               text: "By Vieri Corp.™"
             }
           }
@@ -430,6 +436,7 @@ bot.on('message', message => {
             console.log(msg);
             download(msg.url + '.jpeg', 'display.png', function(){
               const file = new Discord.MessageAttachment('./display.png');
+              const vieri = new Discord.MessageAttachment('./viericorp.png');
               const text = {
                 color: 16764006,
                 author: {
@@ -451,10 +458,11 @@ bot.on('message', message => {
                 },  
                 timestamp: new Date(),
                 footer: {
+                  icon_url: 'attachment://viericorp.png',
                   text: "Powered By Vieri Corp.™ ALl Rights Reserved."
                 },
               };
-              message.channel.send({files: [file], embed: text})
+              message.channel.send({files: [file, vieri], embed: text})
             });
           });
           break;
@@ -486,7 +494,8 @@ bot.on('message', message => {
           if(hasil === ""){
             message.channel.send('nothing in the list');
           } else {
-            message.channel.send({embed: {
+            const vieri = new Discord.MessageAttachment('./viericorp.png');
+            message.channel.send({files: [vieri], embed: {
               color: 16764006,
               author: {
                 name: 'Duel Ratings',
@@ -499,6 +508,7 @@ bot.on('message', message => {
               }],
               timestamp: new Date(),
               footer: {
+                icon_url: 'attachment://viericorp.png',
                 text: "By Vieri Corp.™"
               }
             }
@@ -521,6 +531,7 @@ bot.on('message', message => {
           message.channel.send(hasil);
           break;
         case '^clear':
+          if(message.channel.id != '711604888370544652'){message.channel.send('wrong channel');break;}
           map.forEach(function buangHist(values, key){
             fs.unlinkSync("history/" + key + ".json");
           });
