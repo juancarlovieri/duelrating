@@ -8,6 +8,7 @@ node_modules/
 *.log
 build/
 Procfile
-"Duel rating-3d9d81aa83a7.json"
+spreadsheet-api.json
+
 
 
