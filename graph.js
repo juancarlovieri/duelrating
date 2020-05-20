@@ -15,7 +15,7 @@ module.exports={
   multiple: function(args, message, map){
     var data = [];
     console.log(args.length);
-    var names = '';
+    var names = 'graph for';
     for(var i = 1; i < args.length; i++){
       names += ' ' + args[i];
       console.log(i);
@@ -37,7 +37,7 @@ module.exports={
       data[data.length] = temp;
     }
     console.log(data);
-    var graphOptions = {filename: args.join(' '), fileopt: "overwrite"};
+    var graphOptions = {filename: 'umum', fileopt: "overwrite"};
     plotly.plot(data, graphOptions, function (err, msg) {
       console.log(msg);
       download(msg.url + '.jpeg', 'display.png', function(){

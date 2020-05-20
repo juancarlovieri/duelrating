@@ -35,6 +35,7 @@ module.exports = {
     var trace1 = {
       x: [],
       y: [],
+      name: args[1],
       type: "scatter"
     };
     trace1.y = arr;
@@ -42,7 +43,7 @@ module.exports = {
       trace1.x[trace1.x.length] = i;
     }
     var data = [trace1];
-    var graphOptions = {filename: args[1], fileopt: "overwrite"};
+    var graphOptions = {filename: 'umum', fileopt: "overwrite"};
     plotly.plot(data, graphOptions, function (err, msg) {
       console.log(msg);
       download(msg.url + '.jpeg', 'display.png', function(){
