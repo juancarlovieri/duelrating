@@ -34,7 +34,7 @@ function download(uri, filename, callback){
 }
 
 
-var hellos = ["hullo orz!", "hellaw", "how are you?", "howdy", "how do ye?", "piye kabare", "Sugeng Enjing", "halo orz!"];
+var hellos = ["hullo orz!", "hellaw", "how are you?", "howdy", "how do ye?", "piye kabare", "Sugeng Enjing", "halo orz!", "owo!", "uwu!"];
 var retrieve = {};
 var map = new Map();
 
@@ -302,7 +302,7 @@ function newHist(name, array){
 
 var reminder = schedule.scheduleJob(tminus30min, function(){
   const logo = new Discord.MessageAttachment('./viericorp.png');
-  bot.channels.cache.get('712323110048628746').send("Duel 30 menit jam lagi! <@&700622705879416843>");
+  bot.channels.cache.get('712323110048628746').send("Duel dalam 30 menit lagi! <@&700622705879416843>");
 });
 
 var outSoal = schedule.scheduleJob(onContest, function(){
@@ -327,20 +327,25 @@ var outSoal = schedule.scheduleJob(onContest, function(){
     }
   }
   });
-  bot.channels.cache.get('712323110048628746').send('Let the Duel begin! Tune in now to spectate the duel! <@&700622705879416843>');
+  bot.channels.cache.get('712323110048628746').send('Duel mulai! Ayo Dukung tim favorit kalian! <@&700622705879416843>');
 });
 
 bot.on('message', message => {
   if (message.content.substr(0, 1) == '^') {
       var args = message.content.split(" ");
+      console.log(message.author.username + ' ' + message.author.lastMessageID);
       switch(args[0]) {
         // !ping
         case '^hi':
           const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'dascohai');
           message.react(emoji);
           var min = 0;
-          var max = 6;
+          var max = 10;
           message.channel.send(hellos[Math.floor(Math.random() * (+max - +min)) + +min]);
+          break;
+        case '^win':
+          if(message.channel.id != '574031032936824853')break;
+          bot.channels.cache.get('712323110048628746').send("Duel selesai dan pemenangnya adalah: " + soal.winner);
           break;
         case '^announce':
           if(message.channel.id != '574031032936824853')break;
