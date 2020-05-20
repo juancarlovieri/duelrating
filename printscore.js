@@ -19,7 +19,7 @@ module.exports = {
         hasil += `**A**: ${rte}\n`;
         break;
         default:
-        hasil += '**A**: unatempted\n';
+        hasil += '**A**: \n';
         break;
     }
     switch (`${name.b}`){
@@ -36,7 +36,7 @@ module.exports = {
         hasil += `**B**: ${rte}\n`;
         break;
         default:
-        hasil += '**B**: unatempted\n';
+        hasil += '**B**: \n';
         break;
     }
     switch (`${name.c}`){
@@ -53,7 +53,7 @@ module.exports = {
         hasil += `**C**: ${rte}\n`;
         break;
         default:
-        hasil += '**C**: unatempted\n';
+        hasil += '**C**: \n';
         break;
     }
     switch (`${name.d}`){
@@ -70,7 +70,7 @@ module.exports = {
         hasil += `**D**: ${rte}\n`;
         break;
         default:
-        hasil += '**D**: unatempted\n';
+        hasil += '**D**: \n';
         break;
     }
     switch (`${name.e}`){
@@ -87,7 +87,7 @@ module.exports = {
         hasil += `**E**: ${rte}\n`;
         break;
         default:
-        hasil += '**E**: unatempted\n';
+        hasil += '**E**: \n';
         break;
     }
     switch (`${name.f}`){
@@ -104,7 +104,7 @@ module.exports = {
         hasil += `**F**: ${rte}\n`;
         break;
         default:
-        hasil += '**F**: unatempted\n';
+        hasil += '**F**: \n';
         break;
     }
     switch (`${name.g}`){
@@ -121,7 +121,7 @@ module.exports = {
         hasil += `**G**: ${rte}\n`;
         break;
         default:
-        hasil += '**G**: unatempted\n';
+        hasil += '**G**: \n';
         break;
     }
     switch (`${name.h}`){
@@ -138,7 +138,7 @@ module.exports = {
         hasil += `**H**: ${rte}\n`;
         break;
         default:
-        hasil += '**H**: unatempted\n';
+        hasil += '**H**: \n';
         break;
     }
     hasil += `**TOTAL**: ${name.total}\n`;

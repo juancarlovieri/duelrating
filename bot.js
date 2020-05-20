@@ -3,6 +3,7 @@ var plotly = require('plotly')('juancarlovieri', "cFGB4qzuLQc1dTw67Z19");
 const GoogleSpreadsheet = require('google-spreadsheet');
 const {promisify} = require('util');
 const fs = require('fs');
+const gamble = require('./gamble.js');
 const graph = require('./graph.js');
 const teamrate = require('./teamrate.js');
 var help = require('./help.json');
@@ -23,6 +24,7 @@ const express = require('express');
 const path = require('path');
 const PORT = process.env.PORT || 5000;
 var tminus30min = new Date(soal.year, soal.month, soal.date, parseInt(soal.hour) - 1, parseInt(soal.minute) + 30, soal.second);
+var tminustwohour = new Date(soal.year, soal.month, soal.date, parseInt(soal.hour) - 2, soal.minute, soal.second);
 var onContest = new Date(soal.year, soal.month, soal.date, soal.hour, soal.minute, soal.second);
 
 express()
@@ -147,6 +149,11 @@ var reminder = schedule.scheduleJob(tminus30min, function(){
   bot.channels.cache.get('712323110048628746').send("Duel dalam 30 menit lagi! <@&700622705879416843>");
 });
 
+var reminder = schedule.scheduleJob(tminustwohour, function(){
+  const logo = new Discord.MessageAttachment('./viericorp.png');
+  bot.channels.cache.get('712323110048628746').send("Duel dalam dua jam lagi! <@&700622705879416843>");
+});
+
 var outSoal = schedule.scheduleJob(onContest, function(){
   const logo = new Discord.MessageAttachment('./viericorp.png');
   bot.channels.cache.get('711604888370544652').send({files: [logo], embed:{
@@ -179,11 +186,16 @@ bot.on('message', message => {
       switch(args[0]) {
         // !ping
         case '^hi':
+          // cache.has(message.guild.roles.cache.get("711613259412799538"))
+          // console.log(message.guild.roles.cache.get("711613259412799538"));
           const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'dascohai');
           message.react(emoji);
           var min = 0;
           var max = 10;
           message.channel.send(hellos[Math.floor(Math.random() * (+max - +min)) + +min]);
+          break;
+        case '^gamble':
+          gamble.gamble(message);
           break;
         case '^win':
           if(message.channel.id != '574031032936824853')message.channel.send('sorry, I didn\'t get that, type ^help to see the commands');
@@ -200,7 +212,10 @@ bot.on('message', message => {
             message.channel.send('sorry, I didn\'t get that, type ^help to see the commands');
             break;
           }
-          if(message.channel.id != '711604888370544652'){message.channel.send('wrong channel');break;}
+          if(message.member.roles._roles.has('711613259412799538') == false){
+            message.channel.send('wrong person');
+            break;
+          }
           if(parseInt(args[2]) <= 0){
             message.channel.send('enter a positive integer!');
             break;
@@ -251,8 +266,11 @@ bot.on('message', message => {
           if(args.length != 3){
             message.channel.send('sorry, I didn\'t get that, type ^help to see the commands');
             break;
-           }
-          if(message.channel.id != '711604888370544652'){message.channel.send('wrong channel');break;}
+          }
+          if(message.member.roles._roles.has('711613259412799538') == false){
+            message.channel.send('wrong person');
+            break;
+          }
           if(parseInt(args[2]) <= 0){
             message.channel.send('enter a positive integer!');
             break;
@@ -295,7 +313,10 @@ bot.on('message', message => {
             message.channel.send('sorry, I didn\'t get that, type ^help to see the commands');
             break;
           }
-          if(message.channel.id != '711604888370544652'){message.channel.send('wrong channel');break;}
+          if(message.member.roles._roles.has('711613259412799538') == false){
+            message.channel.send('wrong person');
+            break;
+          }
           if(map.has(args[1]) == false){
             message.channel.send('**' + args[1] + '** not found');
             break;
@@ -317,7 +338,10 @@ bot.on('message', message => {
             message.channel.send('sorry, I didn\'t get that, type ^help to see the commands');
             break;
           }
-          if(message.channel.id != '711604888370544652'){message.channel.send('wrong channel');break;}
+          if(message.member.roles._roles.has('711613259412799538') == false){
+            message.channel.send('wrong person');
+            break;
+          }
           switch(map.has(args[1])){
             case true:
               fs.unlinkSync("history/" + args[1] + ".json");
@@ -340,7 +364,10 @@ bot.on('message', message => {
           message.channel.send(help.text);
           break;
         case '^clear':
-          if(message.channel.id != '711604888370544652'){message.channel.send('wrong channel');break;}
+          if(message.member.roles._roles.has('711613259412799538') == false){
+            message.channel.send('wrong person');
+            break;
+          }
           map.forEach(function buangHist(values, key){
             fs.unlinkSync("history/" + key + ".json");
           });

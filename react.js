@@ -59,7 +59,7 @@ module.exports = {
         message.react(emoji);
       }
       if(cur.substr(0, 4).toLowerCase() === "bruh"){
-        const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'novaryo');
+        const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'novaryobruh');
         message.react(emoji);
       }
       if(cur.substr(0, 6).toLowerCase() === "rating"){

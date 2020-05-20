@@ -3,7 +3,7 @@ const soal = require('./soal.json');
 
 module.exports = {
   announce: function(message, bot){
-    if(message.channel.id != '574031032936824853')message.channel.send('sorry, I didn\'t get that, type ^help to see the commands');
+    if(message.channel.id != '574031032936824853'){message.channel.send('sorry, I didn\'t get that, type ^help to see the commands');return;}
     var peserta = soal.participantone + ' vs ' + soal.participanttwo;
     const vierilogo = new Discord.MessageAttachment('./viericorp.png');
     bot.channels.cache.get('712323110048628746').send({files: [vierilogo], embed: {
