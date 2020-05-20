@@ -4,6 +4,7 @@ const GoogleSpreadsheet = require('google-spreadsheet');
 const {promisify} = require('util');
 const fs = require('fs');
 const graph = require('./graph.js');
+const teamrate = require('./teamrate.js');
 var help = require('./help.json');
 const react = require('./react.js');
 var schedule = require('node-schedule');
@@ -190,6 +191,9 @@ bot.on('message', message => {
           break;
         case '^announce':
           announce.announce(message, bot);
+          break;
+        case '^teamrate':
+          teamrate.get(message, args, map);
           break;
         case '^stonks':
           if(args.length != 3){
