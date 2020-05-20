@@ -3,12 +3,16 @@ var plotly = require('plotly')('juancarlovieri', "cFGB4qzuLQc1dTw67Z19");
 const GoogleSpreadsheet = require('google-spreadsheet');
 const {promisify} = require('util');
 const fs = require('fs');
+const react = require('./react.js');
 var schedule = require('node-schedule');
 var Discord = require('discord.js');
 var logger = require('winston');
 var creds = require('./spreadsheet-api.json')
 var auth = require('./auth.json');
 var soal = require('./soal.json');
+var announce = require('./announce.js');
+const getUserInfo = require('./getUserInfo');
+var pscore = require('./printscore.js');
 const cool = require('cool-ascii-faces');
 var datetime = new Date();
 const express = require('express');
@@ -25,170 +29,11 @@ express()
   .get('/cool', (req, res) => res.send(cool()))
   .listen(PORT, () => console.log(`Listening on ${ PORT }`));
 
-function download(uri, filename, callback){
-  request.head(uri, function(err, res, body){
-    console.log('content-type:', res.headers['content-type']);
-    console.log('content-length:', res.headers['content-length']);
-    request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
-  });
-}
 
 
 var hellos = ["hullo orz!", "hellaw", "how are you?", "howdy", "how do ye?", "piye kabare", "Sugeng Enjing", "halo orz!", "owo!", "uwu!"];
 var retrieve = {};
 var map = new Map();
-
-function printStudent(name, message){
-  // console.log(channel);
-  var hasil = '';
-  // var hasil = [name._cn6ca, name.a, name.b, name.c, name.d, name.e, name.total];
-  // hasil += `__**${name._cn6ca}**__\n`
-  var ac = message.guild.emojis.cache.find(emoji => emoji.name === "AC");
-  var tle = message.guild.emojis.cache.find(emoji => emoji.name === "TLE");
-  var wa = message.guild.emojis.cache.find(emoji => emoji.name === "WA");
-  var rte = message.guild.emojis.cache.find(emoji => emoji.name === "RE");
-  switch (`${name.a}`){
-    case 'AC':
-      hasil += `**A**: ${ac}\n`;
-      break;
-    case 'WA':
-      hasil += `**A**: ${wa}\n`;
-      break;
-    case 'TLE':
-      hasil += `**A**: ${tle}\n`;
-      break;
-    case 'RTE':
-      hasil += `**A**: ${rte}\n`;
-      break;
-    default:
-      hasil += '**A**: unatempted\n';
-      break;
-  }
-  switch (`${name.b}`){
-    case 'AC':
-      hasil += `**B**: ${ac}\n`;
-      break;
-    case 'WA':
-      hasil += `**B**: ${wa}\n`;
-      break;
-    case 'TLE':
-      hasil += `**B**: ${tle}\n`;
-      break;
-    case 'RTE':
-      hasil += `**B**: ${rte}\n`;
-      break;
-    default:
-      hasil += '**B**: unatempted\n';
-      break;
-  }
-  switch (`${name.c}`){
-    case 'AC':
-      hasil += `**C**: ${ac}\n`;
-      break;
-    case 'WA':
-      hasil += `**C**: ${wa}\n`;
-      break;
-    case 'TLE':
-      hasil += `**C**: ${tle}\n`;
-      break;
-    case 'RTE':
-      hasil += `**C**: ${rte}\n`;
-      break;
-    default:
-      hasil += '**C**: unatempted\n';
-      break;
-  }
-  switch (`${name.d}`){
-    case 'AC':
-      hasil += `**D**: ${ac}\n`;
-      break;
-    case 'WA':
-      hasil += `**D**: ${wa}\n`;
-      break;
-    case 'TLE':
-      hasil += `**D**: ${tle}\n`;
-      break;
-    case 'RTE':
-      hasil += `**D**: ${rte}\n`;
-      break;
-    default:
-      hasil += '**D**: unatempted\n';
-      break;
-  }
-  switch (`${name.e}`){
-    case 'AC':
-      hasil += `**E**: ${ac}\n`;
-      break;
-    case 'WA':
-      hasil += `**E**: ${wa}\n`;
-      break;
-    case 'TLE':
-      hasil += `**E**: ${tle}\n`;
-      break;
-    case 'RTE':
-      hasil += `**E**: ${rte}\n`;
-      break;
-    default:
-      hasil += '**E**: unatempted\n';
-      break;
-  }
-  switch (`${name.f}`){
-    case 'AC':
-      hasil += `**F**: ${ac}\n`;
-      break;
-    case 'WA':
-      hasil += `**F**: ${wa}\n`;
-      break;
-    case 'TLE':
-      hasil += `**F**: ${tle}\n`;
-      break;
-    case 'RTE':
-      hasil += `**F**: ${rte}\n`;
-      break;
-    default:
-      hasil += '**F**: unatempted\n';
-      break;
-  }
-  switch (`${name.g}`){
-    case 'AC':
-      hasil += `**G**: ${ac}\n`;
-      break;
-    case 'WA':
-      hasil += `**G**: ${wa}\n`;
-      break;
-    case 'TLE':
-      hasil += `**G**: ${tle}\n`;
-      break;
-    case 'RTE':
-      hasil += `**G**: ${rte}\n`;
-      break;
-    default:
-      hasil += '**G**: unatempted\n';
-      break;
-  }
-  switch (`${name.h}`){
-    case 'AC':
-      hasil += `**H**: ${ac}\n`;
-      break;
-    case 'WA':
-      hasil += `**H**: ${wa}\n`;
-      break;
-    case 'TLE':
-      hasil += `**H**: ${tle}\n`;
-      break;
-    case 'RTE':
-      hasil += `**H**: ${rte}\n`;
-      break;
-    default:
-      hasil += '**H**: unatempted\n';
-      break;
-  }
-  hasil += `**TOTAL**: ${name.total}\n`;
-  // hasil += '----------------------------------------\n';
-  // bot.channels.cache.get(channel.id).send(hasil);
-  // console.log(`Name: ${name._cn6ca}`);
-  return hasil;
-}
 
 async function accessSpreadsheet(message){
   const doc = new GoogleSpreadsheet('1gIqvphDvB5sBNyltdt2v0CkOrQM-QFBykAOsSOG2Txo');
@@ -205,7 +50,7 @@ async function accessSpreadsheet(message){
   rows.forEach(row => {
   // console.log(row);
     nama[nama.length] = row._cn6ca;
-    arr[arr.length] = printStudent(row, message);
+    arr[arr.length] = pscore.printScore(row, message);
   });
   const vieri = new Discord.MessageAttachment('./viericorp.png');
   message.channel.send({files: [vieri], embed: {
@@ -237,13 +82,6 @@ function start(){
   var obj = JSON.parse(fs.readFileSync("output.json", 'utf8'));
   map = new Map(Object.entries(obj));
   bot.user.setActivity('prabowo', { type: 'WATCHING' });
-  // fs.readFile('output.json',
-  //   // callback function that is called when reading file is done
-  //   function(err, data) { 
-  //       var obj = JSON.parse(data);
-  //       console.log(obj);
-  //       map = new Map(Object.entries(obj));
-  //   });
 }
 var jsonObj = {};
 
@@ -344,48 +182,11 @@ bot.on('message', message => {
           message.channel.send(hellos[Math.floor(Math.random() * (+max - +min)) + +min]);
           break;
         case '^win':
-          if(message.channel.id != '574031032936824853')break;
+          if(message.channel.id != '574031032936824853')message.channel.send('sorry, I didn\'t get that, type ^help to see the commands');
           bot.channels.cache.get('712323110048628746').send("Duel selesai dan pemenangnya adalah: " + soal.winner);
           break;
         case '^announce':
-          if(message.channel.id != '574031032936824853')break;
-          var peserta = soal.participantone + ' vs ' + soal.participanttwo;
-          const vierilogo = new Discord.MessageAttachment('./viericorp.png');
-          bot.channels.cache.get('712323110048628746').send({files: [vierilogo], embed: {
-            color: 16764006,
-            author: {
-              name: 'Pengmuman ' + soal.name,
-              icon_url: "https://cdn.discordapp.com/icons/688018099584237610/aaea71cdce8f697de559185cac6b4ced.png?size=256"
-            },
-            fields: [{
-              name: 'Waktu',
-              value: soal.time
-              // value: '+' + args[2]
-            },
-            {
-              name:"Peserta",
-              value: peserta
-            },
-            {
-              name:"Peraturan",
-              value: soal.rules
-            },  
-            {
-              name:"Score Distribution",
-              value: soal.score
-            }, 
-            {
-              name:"\u200b",
-              value: soal.scoreboard
-            }
-            ],
-            timestamp: new Date(),
-            footer: {
-              icon_url: 'attachment://viericorp.png',
-              text: "By Vieri Corp.™"
-            }
-          }
-          });
+          announce.announce(message, bot);
           break;
         case '^stonks':
           if(args.length != 3){
@@ -438,40 +239,6 @@ bot.on('message', message => {
           }
           });
           save();
-          break;
-        case '^graph':
-          if(args.length != 2){
-            message.channel.send('sorry, I didn\'t get that, type ^help to see the commands');
-            break;
-          }
-          if(map.has(args[1]) == 0){
-            message.channel.send("**" + args[1] * "** not found");
-            break;
-          }
-          var arr = JSON.parse(fs.readFileSync("history/" + args[1] + ".json", 'utf8')).b;
-          console.log(arr);
-          var trace1 = {
-            x: [],
-            y: [],
-            type: "scatter"
-          };
-          trace1.y = arr;
-          for(var i = 0; i < arr.length; i++){
-            trace1.x[trace1.x.length] = i;
-          }
-          var data = [trace1];
-          var graphOptions = {filename: args[1], fileopt: "overwrite"};
-          plotly.plot(data, graphOptions, function (err, msg) {
-            console.log(msg);
-            download(msg.url + '.jpeg', 'display.png', function(){
-              message.channel.send('**' + args[1] + '**\'s graph', {
-                files:[
-                  "display.png"
-                ]
-              });
-            });
-          });
-          
           break;
         case '^notstonks':
           if(args.length != 3){
@@ -536,68 +303,7 @@ bot.on('message', message => {
           message.channel.send('renamed **' + args[1] + '** to **' + args[2] + '**');
           break;
         case '^get':
-          if(args.length != 2){
-            message.channel.send('sorry, I didn\'t get that, type ^help to see the commands');
-            break;
-          }
-          var hasil = "";
-          if(map.has(args[1]) == false){
-             message.channel.send('**' + args[1] + '** not found');
-            break;
-          }
-          var arr = JSON.parse(fs.readFileSync("history/" + args[1] + ".json", 'utf8')).b;
-          var history = ""; 
-          arr.forEach(
-            function(item, index){
-            history += item.toString() + ' - ';
-          });
-          history = history.substr(0, history.length - 2);
-          arr = JSON.parse(fs.readFileSync("history/" + args[1] + ".json", 'utf8')).b;
-          console.log(arr);
-          var trace1 = {
-            x: [],
-            y: [],
-            type: "scatter"
-          };
-          trace1.y = arr;
-          for(var i = 0; i < arr.length; i++){
-            trace1.x[trace1.x.length] = i;
-          }
-          var data = [trace1];
-          var graphOptions = {filename: args[1], fileopt: "overwrite"};
-          plotly.plot(data, graphOptions, function (err, msg) {
-            console.log(msg);
-            download(msg.url + '.jpeg', 'display.png', function(){
-              const file = new Discord.MessageAttachment('./display.png');
-              const vieri = new Discord.MessageAttachment('./viericorp.png');
-              const text = {
-                color: 16764006,
-                author: {
-                  name: args[1],
-                  icon_url: "https://cdn.discordapp.com/icons/688018099584237610/aaea71cdce8f697de559185cac6b4ced.png?size=256"
-                },
-                title: 'user info',
-                fields: [{
-                  name: "current rating",
-                  value: map.get(args[1]).toString()
-                },
-                {
-                  name: "History",
-                  value: history
-                },
-                ],
-                image:{
-                  url: 'attachment://display.png'
-                },  
-                timestamp: new Date(),
-                footer: {
-                  icon_url: 'attachment://viericorp.png',
-                  text: "Powered By Vieri Corp.™ ALl Rights Reserved."
-                },
-              };
-              message.channel.send({files: [file, vieri], embed: text})
-            });
-          });
+          getUserInfo.printUserInfo(message, bot, args, map);
           break;
         case '^rm':
           if(args.length != 2){
@@ -680,126 +386,6 @@ bot.on('message', message => {
           break;
       }
     } else{
-      var not = 0;
-      var args = message.content.split(" ");
-      var naik = 0;
-      var turun = 0;
-      var ga = 0;
-      var rating = 0;
-      args.forEach(function cek(cur){
-        if(cur.substr(0, 5).toLowerCase() === "haram" || cur.substr(0, 7).toLowerCase() === "diharam"){
-          const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'haram');
-          message.react(emoji);
-        }
-        // if(cur === "69" || cur.toLowerCase() === "***peepee***" || cur.toLowerCase() === "peepee" || cur.toLowerCase() === "**peepee**" || cur.toLowerCase() === "*peepee*" || cur.toLowerCase() === "pp" || cur.toLowerCase() === "*pp*" || cur.toLowerCase() === "**pp**" || cur.toLowerCase() == "***pp***"){
-        //   const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'stonks');
-        //   message.react(emoji);
-        // }
-        if(cur.substr(0, 6).toLowerCase() === "stonks"){
-          if(not == 1){
-            const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'notstonks');
-            message.react(emoji);
-          } else{
-            const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'stonks');
-            message.react(emoji);
-          }
-        }
-        if(cur.substr(0, 5).toLowerCase() === "thonk"){
-          const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'thonkery');
-          message.react(emoji);
-        }
-        // if(cur.substr(0, 3).toLowerCase() === "yes"){
-        //   const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'exclamation');
-        //   message.react(emoji);
-        //   emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'NPNO');
-        //   message.react(emoji);
-        // }
-        if(cur.toLowerCase() === "ac"){
-          const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'AC');
-          message.react(emoji);
-        }
-        if(cur.toLowerCase() === "wa"){
-          const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'WA');
-          message.react(emoji);
-        }
-        if(cur.toLowerCase() === "tle"){
-          const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'TLE');
-          message.react(emoji);
-        }
-        if(cur.toLowerCase() === "mle"){
-          const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'MLE');
-          message.react(emoji);
-        }
-        if(cur.toLowerCase() === "rte" || cur.toLowerCase() === "re"){
-          const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'RE');
-          message.react(emoji);
-        }
-        if(cur.substr(0, 3).toLowerCase() === "hai"){
-          const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'dascohai');
-          message.react(emoji);
-        }
-        if(cur.substr(0, 4).toLowerCase() === "bruh"){
-          const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'novaryo');
-          message.react(emoji);
-        }
-        if(cur.substr(0, 6).toLowerCase() === "rating"){
-          if(naik == 0 && turun == 0)rating = 1;
-          if(naik == 1){
-            const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'stonks');
-            message.react(emoji);
-            naik = 0;
-          }
-          if(turun == 1){
-            const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'notstonks');
-            message.react(emoji);
-            turun = 0;
-          }
-        }
-        if(cur.substr(0, 4).toLowerCase() === "naik"){
-          if(rating == 0) naik = 1;
-          if(rating == 1){
-            const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'stonks');
-            message.react(emoji);
-            naik = 0;
-          }
-        }
-        if(cur.substr(0, 5).toLowerCase() === "turun"){
-          if(rating == 0) turun = 1;
-          if(rating == 1){
-            const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'notstonks');
-            message.react(emoji);
-            turun = 0;
-          }
-        }
-        if(cur.toLowerCase() === "not"){
-          if(not == 1){
-            not = 0;
-          } else not = 1;
-        } else if(not == 1)not = 0;
-        // if(cur.toLowerCase() === "no" ){
-        //   const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'NPNO');
-        //   message.react(emoji);
-        // }
-        // if(cur.substr(0, 3).toLowerCase() === "noo" || cur.substr(0, 2) === ":(" || cur.substr(0, 2) === "):" || cur.substr(0, 2) === ");" || cur.substr(0, 2) === ";("){
-        //   const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'notstonks');
-        //   message.react(emoji);
-        // }
-        if(cur.toLowerCase() === "tk" || cur.substr(0, 4).toLowerCase() === "nani"){
-          const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'maxinani');
-          message.react(emoji);
-        }
-        // if(cur.substr(0, 2).toLowerCase() === "oh"){
-        //   const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'pikatanoh');
-        //   message.react(emoji);
-        // }
-        if(cur.toLowerCase() === "queueforces" || cur.substr(0, 7).toLowerCase() === "unrated" || cur.toLowerCase() === "ngebug" || cur === ":notstonks:"){
-          const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'notstonks');
-          message.react(emoji);
-        }
-        if(cur.substr(0, 3).toLowerCase() === "orz"){
-          const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'ramaorz');
-          message.react(emoji);
-        }
-      });
+      react.cek(message);
     }
 });
