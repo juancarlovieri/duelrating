@@ -3,6 +3,7 @@ var plotly = require('plotly')('juancarlovieri', "cFGB4qzuLQc1dTw67Z19");
 const GoogleSpreadsheet = require('google-spreadsheet');
 const {promisify} = require('util');
 const fs = require('fs');
+const graph = require('./graph.js');
 var help = require('./help.json');
 const react = require('./react.js');
 var schedule = require('node-schedule');
@@ -327,6 +328,9 @@ bot.on('message', message => {
           break;
         case '^top':
           top.print(message, map);
+          break;
+        case '^graph':
+          graph.multiple(args, message, map);
           break;
         case '^help':
           message.channel.send(help.text);
