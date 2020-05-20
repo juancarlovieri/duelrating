@@ -1,0 +1,3 @@
+{
+  "text": "type:\n**^hi** to say hi\n**^get <username>** to get <username>'s rating and its history\n**^graph <username>** to get <username>'s rating graph\n**^top** to list all participants with its ratings sorted descendingly\n**^score** to see currently running duel scoreboard\n**^help** to be stupid\n"
+}

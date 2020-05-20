@@ -3,8 +3,10 @@ var plotly = require('plotly')('juancarlovieri', "cFGB4qzuLQc1dTw67Z19");
 const GoogleSpreadsheet = require('google-spreadsheet');
 const {promisify} = require('util');
 const fs = require('fs');
+var help = require('./help.json');
 const react = require('./react.js');
 var schedule = require('node-schedule');
+var top = require('./top.js');
 var Discord = require('discord.js');
 var logger = require('winston');
 var creds = require('./spreadsheet-api.json')
@@ -37,8 +39,8 @@ var map = new Map();
 
 async function accessSpreadsheet(message){
   const doc = new GoogleSpreadsheet('1gIqvphDvB5sBNyltdt2v0CkOrQM-QFBykAOsSOG2Txo');
-  await promisify(doc.useServiceAccountAuth)(creds);
-  const info = await promisify(doc.getInfo)();
+    await promisify(doc.useServiceAccountAuth)(creds);
+    const info = await promisify(doc.getInfo)();
   const sheet = info.worksheets[0];
   console.log(info.title);
   console.log(`Title: ${sheet.title}, Rows: ${sheet.rowCount}`);
@@ -183,7 +185,7 @@ bot.on('message', message => {
           break;
         case '^win':
           if(message.channel.id != '574031032936824853')message.channel.send('sorry, I didn\'t get that, type ^help to see the commands');
-          bot.channels.cache.get('712323110048628746').send("Duel selesai dan pemenangnya adalah: " + soal.winner);
+          else bot.channels.cache.get('712323110048628746').send("Duel selesai dan pemenangnya adalah: " + soal.winner);
           break;
         case '^announce':
           announce.announce(message, bot);
@@ -324,50 +326,10 @@ bot.on('message', message => {
           }
           break;
         case '^top':
-          var counter = 0;
-          var hasil = "";
-          map.forEach(function printList(values, key){
-            ++counter;
-            hasil += counter.toString() + '. **' + key + '** ' + values.toString() + '\n'
-          });
-          if(hasil === ""){
-            message.channel.send('nothing in the list');
-          } else {
-            const vieri = new Discord.MessageAttachment('./viericorp.png');
-            message.channel.send({files: [vieri], embed: {
-              color: 16764006,
-              author: {
-                name: 'Duel Ratings',
-                icon_url: "https://cdn.discordapp.com/icons/688018099584237610/aaea71cdce8f697de559185cac6b4ced.png?size=256"
-              },
-              title: "Top of the leaderboard",
-              fields: [{
-                name: "Sorted descendingly by rating",
-                value: hasil
-              }],
-              timestamp: new Date(),
-              footer: {
-                icon_url: 'attachment://viericorp.png',
-                text: "By Vieri Corp.™"
-              }
-            }
-            });
-          }
+          top.print(message, map);
           break;
         case '^help':
-          var hasil = '';
-          hasil += 'type:\n';
-          hasil += '**^hi** to say hi\n';
-          // hasil += '**^stonks <username> <score>** to add <score> to <username> => only admins\n';
-          // hasil += '**^notstonks <username> <score>** to decrease <score> from <username> => only admins\n';
-          hasil += '**^get <username>** to get <username>\'s rating and its history\n';
-          hasil += '**^graph <username>** to get <username>\'s rating graph\n';
-          // hasil += '**^rm <username>** to remove <username> from the participant\'s list => only admins\n';
-          hasil += '**^top** to list all participants with its ratings sorted descendingly\n';
-          // hasil += '**^hist <username>** to get <username>\'s rating history\n';
-          hasil += '**^score** to see currently running duel scoreboard\n';
-          hasil += '**^help** to be stupid\n';
-          message.channel.send(hasil);
+          message.channel.send(help.text);
           break;
         case '^clear':
           if(message.channel.id != '711604888370544652'){message.channel.send('wrong channel');break;}
