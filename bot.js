@@ -302,7 +302,7 @@ function newHist(name, array){
 
 var reminder = schedule.scheduleJob(tminus30min, function(){
   const logo = new Discord.MessageAttachment('./viericorp.png');
-  bot.channels.cache.get('712323110048628746').send("Duel dalam satu jam lagi! <@&700622705879416843>");
+  bot.channels.cache.get('712323110048628746').send("Duel 30 menit jam lagi! <@&700622705879416843>");
 });
 
 var outSoal = schedule.scheduleJob(onContest, function(){
