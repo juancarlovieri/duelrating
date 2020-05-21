@@ -5,6 +5,7 @@ const {promisify} = require('util');
 const fs = require('fs');
 const gamble = require('./gamble.js');
 const graph = require('./graph.js');
+const atcoder = require('./atcoder.js');
 const teamrate = require('./teamrate.js');
 var help = require('./help.json');
 const react = require('./react.js');
@@ -15,25 +16,14 @@ var logger = require('winston');
 var creds = require('./spreadsheet-api.json')
 var auth = require('./auth.json');
 var soal = require('./soal.json');
+var atcoderApi = require("@odanado/atcoder-api");
 var announce = require('./announce.js');
 const getUserInfo = require('./getUserInfo');
 var pscore = require('./printscore.js');
-const cool = require('cool-ascii-faces');
 var datetime = new Date();
-const express = require('express');
-const path = require('path');
-const PORT = process.env.PORT || 5000;
 var tminus30min = new Date(soal.year, soal.month, soal.date, parseInt(soal.hour) - 1, parseInt(soal.minute) + 30, soal.second);
 var tminustwohour = new Date(soal.year, soal.month, soal.date, parseInt(soal.hour) - 2, soal.minute, soal.second);
 var onContest = new Date(soal.year, soal.month, soal.date, soal.hour, soal.minute, soal.second);
-
-express()
-  .use(express.static(path.join(__dirname, 'public')))
-  .set('views', path.join(__dirname, 'views'))
-  .set('view engine', 'ejs')
-  .get('/', (req, res) => res.render('pages/index'))
-  .get('/cool', (req, res) => res.send(cool()))
-  .listen(PORT, () => console.log(`Listening on ${ PORT }`));
 
 
 
@@ -186,6 +176,7 @@ bot.on('message', message => {
       switch(args[0]) {
         // !ping
         case '^hi':
+          var client = atcoderApi.AtcoderAPI();
           // cache.has(message.guild.roles.cache.get("711613259412799538"))
           // console.log(message.guild.roles.cache.get("711613259412799538"));
           const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'dascohai');
@@ -353,6 +344,9 @@ bot.on('message', message => {
               message.channel.send('**' + args[1] + '** not found');
               break;
           }
+          break;
+        case '^atcoder':
+          atcoder.contest();
           break;
         case '^top':
           top.print(message, map);

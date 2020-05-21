@@ -1,5 +1,6 @@
 module.exports = {
   printScore: function(name, message){
+    // console.log(name);
     var hasil = '';
     var ac = message.guild.emojis.cache.find(emoji => emoji.name === "AC");
     var tle = message.guild.emojis.cache.find(emoji => emoji.name === "TLE");
@@ -142,6 +143,9 @@ module.exports = {
         break;
     }
     hasil += `**TOTAL**: ${name.total}\n`;
+    hasil += `**AC rate**: ${name.acrate}\n`;
+    hasil += `**Number of Submissions**: ${name.submissions}\n`;
+    hasil += `**Number of AC**: ${name.ac}`;
     // hasil += '----------------------------------------\n';
     // bot.channels.cache.get(channel.id).send(hasil);
     // console.log(`Name: ${name._cn6ca}`);

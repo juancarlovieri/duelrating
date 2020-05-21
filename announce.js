@@ -12,6 +12,7 @@ module.exports = {
         name: 'Pengmuman ' + soal.name,
         icon_url: "https://cdn.discordapp.com/icons/688018099584237610/aaea71cdce8f697de559185cac6b4ced.png?size=256"
       },
+      title: 'Ayo dukung tim favorit kalian!',
       fields: [{
         name: 'Waktu',
         value: soal.time
@@ -21,13 +22,13 @@ module.exports = {
         name:"Peserta",
         value: peserta
       },
-      {
+      { 
         name:"Peraturan",
         value: soal.rules
       },  
       {
         name:"Score Distribution",
-        value: soal.score
+        value: soal.score + '\nAyo gambling untuk tim favorit kalian!'
       }, 
       {
         name:"\u200b",
