@@ -40,17 +40,14 @@ function save(){
 }
 
 module.exports = {
-  gamble: function(message){
+  gamble: function(message, bot){
     if(balance.has(message.author.username) == 0){
       bankrupt.set(message.author.username, 0);
       balance.set(message.author.username, 1000);
     }
     var args = message.content.split(" ");
     if(args[1] === "count"){
-      if(message.member.roles._roles.has('711613259412799538') == false){
-        message.channel.send('wrong person');
-        return;
-      }
+      if(message.channel.id != '574031032936824853'){message.channel.send('sorry, I didn\'t get that, type ^help to see the commands');return;}
       map.forEach(function(value, key){
         console.log(value);
         if(value[1] == soal.teamWinner){
@@ -61,12 +58,12 @@ module.exports = {
         if(balance.get(key) == 0){
           bankrupt.set(key, bankrupt.get(key) + 1);
           balance.set(key, 100);
-          message.channel.send(key + ' has gone bankrupt!');
+          bot.channels.cache.get('711604888370544652').send(key + ' has gone bankrupt!');
         }
       });
       map.clear();
       save();
-      message.channel.send('the gamblings have been counted!');
+      bot.channels.cache.get('711604888370544652').send('the gamblings have been counted!');
       return;
     }
     if(args[1] === "bal"){

@@ -195,7 +195,7 @@ bot.on('message', message => {
           message.channel.send(hellos[Math.floor(Math.random() * (+max - +min)) + +min]);
           break;
         case '^gamble':
-          gamble.gamble(message);
+          gamble.gamble(message, bot);
           break;
         case '^win':
           if(message.channel.id != '574031032936824853')message.channel.send('sorry, I didn\'t get that, type ^help to see the commands');
