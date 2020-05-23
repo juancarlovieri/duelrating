@@ -9,7 +9,7 @@ module.exports = {
     bot.channels.cache.get('712323110048628746').send({files: [vierilogo], embed: {
       color: 16764006,
       author: {
-        name: 'Pengmuman ' + soal.name,
+        name: 'Pengumuman ' + soal.name,
         icon_url: "https://cdn.discordapp.com/icons/688018099584237610/aaea71cdce8f697de559185cac6b4ced.png?size=256"
       },
       title: 'Ayo dukung tim favorit kalian!',

@@ -166,7 +166,7 @@ var outSoal = schedule.scheduleJob(onContest, function(){
     }
   }
   });
-  bot.channels.cache.get('712323110048628746').send('Duel mulai! Ayo Dukung tim favorit kalian! <@&700622705879416843>');
+  bot.channels.cache.get('712323110048628746').send('Duel dimulai! Ayo Dukung tim favorit kalian dan tonton ' + soal.scoreboard + 'nya! <@&700622705879416843>');
 });
 
 bot.on('message', message => {
