@@ -28,17 +28,21 @@ module.exports = {
       },  
       {
         name:"Score Distribution",
-        value: soal.score + '\nAyo gambling untuk tim favorit kalian!'
+        value: soal.score
       }, 
       {
-        name:"\u200b",
-        value: soal.scoreboard
+        name:"Problem Setters",
+        value: soal.problemsetter
+      },
+      {
+        name:'\u200b',
+        value: 'Ayo gambling untuk tim favorit kalian!\n' + soal.scoreboard
       }
       ],
       timestamp: new Date(),
       footer: {
         icon_url: 'attachment://viericorp.png',
-        text: "By Vieri Corp.™"
+        text: "Powered By Vieri Corp.™ All Rights Reserved."
       }
     }
     });

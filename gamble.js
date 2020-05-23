@@ -135,6 +135,10 @@ module.exports = {
       message.channel.send('you cannot gamble more than the money you have!');
       return;
     }
+    if(soal.contestStatus == "ongoing"){
+      message.channel.send('the duel is ongoing, cannot take back your gamble!');
+      return;
+    }
     arr[0] = parseInt(args[1]);
     arr[1] = args[2];
     map.set(message.author.username, arr);

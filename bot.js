@@ -35,7 +35,7 @@ async function accessSpreadsheet(message){
   const doc = new GoogleSpreadsheet('1gIqvphDvB5sBNyltdt2v0CkOrQM-QFBykAOsSOG2Txo');
     await promisify(doc.useServiceAccountAuth)(creds);
     const info = await promisify(doc.getInfo)();
-  const sheet = info.worksheets[0];
+  const sheet = info.worksheets[parseInt(soal.scoreboardSheet)];
   console.log(info.title);
   console.log(`Title: ${sheet.title}, Rows: ${sheet.rowCount}`);
   const rows = await promisify(sheet.getRows)({
@@ -52,16 +52,16 @@ async function accessSpreadsheet(message){
   message.channel.send({files: [vieri], embed: {
     color: 16764006,
     author: {
-      name: info.title,
+      name: sheet.title,
       icon_url: "https://cdn.discordapp.com/icons/688018099584237610/aaea71cdce8f697de559185cac6b4ced.png?size=256"
     },
     title: 'Ayo dukung tim favorit kalian! Partisipan duel kali ini adalah **' + nama[0] + '** melawan **' + nama[1] + '**',
     fields: [{
-      name: 'tim ' + nama[0],
+      name: 'tim A: ' + nama[0],
       value: arr[0]
     },
     {
-      name: "tim " + nama[1],
+      name: "tim B: " + nama[1],
       value: arr[1]
     }],
     timestamp: new Date(),
@@ -176,7 +176,6 @@ bot.on('message', message => {
       switch(args[0]) {
         // !ping
         case '^hi':
-          var client = atcoderApi.AtcoderAPI();
           // cache.has(message.guild.roles.cache.get("711613259412799538"))
           // console.log(message.guild.roles.cache.get("711613259412799538"));
           const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'dascohai');
