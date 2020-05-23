@@ -136,7 +136,7 @@ module.exports = {
       return;
     }
     if(soal.contestStatus == "ongoing"){
-      message.channel.send('the duel is ongoing, cannot take back your gamble!');
+      message.channel.send('the duel is ongoing, cannot gamble!');
       return;
     }
     arr[0] = parseInt(args[1]);
