@@ -266,6 +266,24 @@ bot.on("message", message => {
       case "^teamrate":
         teamrate.get(message, args, map);
         break;
+      case "^reserve":
+        if(message.channel.id != "574031032936824853")
+          message.channel.send(
+          "sorry, I didn't get that, type ^help to see the commands"
+        );
+        else{
+          bot.channels.cache.get("712323110048628746").send("Yang mau ikut duel selanjutnya, ayo react ke message ini! <@&700622705879416843>");
+        }
+        break;
+      case "^setter":
+        if(message.channel.id != "574031032936824853")
+          message.channel.send(
+          "sorry, I didn't get that, type ^help to see the commands"
+        );
+        else{
+          bot.channels.cache.get("712323110048628746").send("Yang jadi problemsetter duel selanjutnya, ayo react ke message ini! <@&700622705879416843>");
+        }
+        break;
       case "^stonks":
         if (args.length != 3) {
           message.channel.send(
