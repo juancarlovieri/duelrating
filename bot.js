@@ -221,6 +221,7 @@ var outSoal = schedule.scheduleJob(onContest, function() {
       }
     }
   });
+<<<<<<< HEAD
   bot.channels.cache
     .get("712323110048628746")
     .send(
@@ -228,6 +229,9 @@ var outSoal = schedule.scheduleJob(onContest, function() {
         soal.scoreboard +
         "nya! <@&700622705879416843>"
     );
+=======
+  bot.channels.cache.get('712323110048628746').send('Duel dimulai! Ayo Dukung tim favorit kalian dan tonton ' + soal.scoreboard + 'nya! <@&700622705879416843>');
+>>>>>>> a8ad73f4ec37082d905f801b32e172c2c2cfcac5
 });
 
 bot.on("message", message => {
