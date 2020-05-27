@@ -123,7 +123,7 @@ function start() {
   var obj = JSON.parse(fs.readFileSync("output.json", "utf8"));
   console.log(obj);
   map = new Map(Object.entries(obj));
-  bot.user.setActivity("prabowo", { type: "WATCHING" });
+  bot.user.setActivity("Bombsite B", { type: "PLAYING" });
 }
 var jsonObj = {};
 
@@ -197,7 +197,7 @@ var reminder = schedule.scheduleJob(tminustwohour, function() {
 });
 
 var outSoal = schedule.scheduleJob(onContest, function() {
-  bot.channels.cache.get("711604888370544652").send({
+  bot.channels.cache.get("712323110048628746").send({
     embed: {
       color: 16764006,
       author: {
@@ -221,17 +221,11 @@ var outSoal = schedule.scheduleJob(onContest, function() {
       }
     }
   });
-<<<<<<< HEAD
   bot.channels.cache
     .get("712323110048628746")
     .send(
-      "Duel dimulai! Ayo Dukung tim favorit kalian dan tonton " +
-        soal.scoreboard +
-        "nya! <@&700622705879416843>"
+      "Duel dimulai! Ayo Dukung tim favorit kalian dan tonton scoreboardnya! <@&700622705879416843>"
     );
-=======
-  bot.channels.cache.get('712323110048628746').send('Duel dimulai! Ayo Dukung tim favorit kalian dan tonton ' + soal.scoreboard + 'nya! <@&700622705879416843>');
->>>>>>> a8ad73f4ec37082d905f801b32e172c2c2cfcac5
 });
 
 bot.on("message", message => {
@@ -473,3 +467,4 @@ bot.on("message", message => {
     react.cek(message);
   }
 });
+  
