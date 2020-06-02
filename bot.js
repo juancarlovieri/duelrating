@@ -123,7 +123,7 @@ function start() {
   var obj = JSON.parse(fs.readFileSync("output.json", "utf8"));
   console.log(obj);
   map = new Map(Object.entries(obj));
-  bot.user.setActivity("Bombsite B", { type: "PLAYING" });
+  bot.user.setActivity("toxic messages", { type: "LISTENING" });
 }
 var jsonObj = {};
 
@@ -144,7 +144,7 @@ function save() {
   var jsonContent = JSON.stringify(jsonObj);
   fs.writeFile("output.json", jsonContent, "utf8", function(err) {
     if (err) {
-      console.log("An error occured while writing JSON jsonObj to File.");
+      console.log("An error   occured while writing JSON jsonObj to File.");
       return console.log(err);
     }
     console.log("saved");
@@ -159,6 +159,13 @@ logger.add(new logger.transports.Console(), {
 logger.level = "debug";
 
 var bot = new Discord.Client();
+console.log('login');
+bot.login(auth.token);
+bot.login(auth.token);
+bot.login(auth.token);
+bot.login(auth.token);
+bot.login(auth.token);
+bot.login(auth.token);
 bot.login(auth.token);
 
 bot.on("ready", bot => {
@@ -281,7 +288,7 @@ bot.on("message", message => {
           "sorry, I didn't get that, type ^help to see the commands"
         );
         else{
-          bot.channels.cache.get("712323110048628746").send("Yang jadi problemsetter duel selanjutnya, ayo react ke message ini! <@&700622705879416843>");
+          bot.channels.cache.get("712323110048628746").send("Yang mau jadi problemsetter duel selanjutnya, ayo react ke message ini! <@&700622705879416843>");
         }
         break;
       case "^stonks":
@@ -452,6 +459,7 @@ bot.on("message", message => {
         }
         break;
       case "^top":
+        sort();
         top.print(message, map);
         break;
       case "^graph":
