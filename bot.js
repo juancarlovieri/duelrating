@@ -293,6 +293,31 @@ bot.on("message", message => {
           message.channel.send(args[1] + " is even");
         }
         break;
+      case "^dec":
+        // if(isNaN(parseInt(args[1], 2))){
+        //   message.channel.send("enter a binary number");
+        //   break;
+        // }
+        var flag = 0;
+        for(var i = 0; i < args[1].length; i++){
+          if(args[1][i] != 0 && args[1][i] != 1){
+            flag = 1;
+            break;
+          }
+        }
+        if(flag){
+          message.channel.send("enter a binary number");
+          break;
+        }
+        message.channel.send(parseInt(args[1], 2));
+        break;
+      case "^bin":
+        if(isNaN(args[1])){
+          message.channel.send("enter a number");
+          break;
+        }
+        message.channel.send(parseInt(args[1], 10).toString(2));
+        break;
       case "^announce":
         announce.announce(message, bot);
         break;
