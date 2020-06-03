@@ -20,6 +20,8 @@ var announce = require("./announce.js");
 const getUserInfo = require("./getUserInfo");
 var pscore = require("./printscore.js");
 var datetime = new Date();
+var tes = 12 & 1;
+console.log(tes);
 var tminus30min = new Date(
   soal.year,
   soal.month,
@@ -266,6 +268,30 @@ bot.on("message", message => {
           bot.channels.cache
             .get("712323110048628746")
             .send("Duel selesai dan pemenangnya adalah: " + soal.winner);
+        break;
+      case "^issit":
+        if(isNaN(args[1])){
+          message.channel.send("enter a number");
+          break;
+        }
+        var last = 0;
+        for(var i = 1; i < args[1].length; i++){
+          if(args[1][i] == '.')break;
+          last = i;
+        }
+        var flag = 0;
+        for(var i = last + 2; i < args[1].length; i++){
+          if(args[1][i] != '0')flag = 1;
+        }
+        if(flag){
+          message.channel.send('enter an integer');
+          break;
+        }
+        if(parseInt(args[1][last], 10) & 1){
+          message.channel.send(args[1] + " is odd");
+        } else{
+          message.channel.send(args[1] + " is even");
+        }
         break;
       case "^announce":
         announce.announce(message, bot);
