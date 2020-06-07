@@ -53,6 +53,16 @@ app.get("/", (request, response) => {
 });
 app.listen(process.env.PORT);
 
+var http = require('http');
+var app2 = express();
+app2.get("/", (request, response) => {
+  response.sendStatus(200);
+});
+app2.listen(8080);
+setInterval(() => {
+http.get(`http://${process.env.PROJECT_DOMAIN}.glitch.me/`);
+}, 280000);
+
 var hellos = [
   "hullo orz!",
   "hellaw",

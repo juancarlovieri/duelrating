@@ -79,7 +79,7 @@ module.exports = {
         },
         fields: [
           {
-            name: '\u200b',
+            name: 'Sorted descendingly by balance',
             value: hasil
           },
         ],

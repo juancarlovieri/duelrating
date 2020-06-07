@@ -15,6 +15,10 @@ module.exports = {
       //   const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'stonks');
       //   message.react(emoji);
       // }
+      if(cur.toLowerCase() === "duel"){
+        const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'hocky');
+        message.react(emoji);
+      }
       if(cur.substr(0, 6).toLowerCase() === "stonks"){
         if(not == 1){
           const emoji = message.guild.emojis.cache.find(emoji => emoji.name === 'notstonks');
