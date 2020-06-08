@@ -122,12 +122,16 @@ module.exports = {
       var temp = '';
       var flag = 0;
       for(var i = 2; i < args.length; i++){
+        console.log(args[i][args[i].length - 1]);
         if(args[i][0] == '"'){
           temp += args[i].substr(1, args[i].length - 1);
           flag = 1;
-          continue;
+          if(args[i][args[i].length - 1] == '"'){
+            flag = -1;
+            temp = args[i].substr(1, args[i].length - 2);
+          } else continue;
         }
-        if(flag){
+        if(flag == 1){
           if(args[i][args[i].length - 1] == '"'){
             flag = 0;
             temp += ' ' + args[i].substr(0, args[i].length - 1);
@@ -135,9 +139,9 @@ module.exports = {
             temp += ' ' + args[i];
             continue;
           }
-        } else{
+        } else if (flag == 0){
           temp = args[i];
-        }
+        } else flag = 0;
         console.log(temp);
         names += temp + ', ';
         if(balance.has(temp) == 0){
@@ -155,6 +159,7 @@ module.exports = {
           haha.x[haha.x.length] = j;
         }
         data[data.length] = haha;
+        temp = '';
       }
       if(flag){
         message.channel.send("***bruh odd number of quotation marks***");
