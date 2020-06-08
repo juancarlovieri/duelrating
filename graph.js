@@ -14,7 +14,6 @@ function download(uri, filename, callback){
 module.exports={
   multiple: function(args, message, map){
     var data = [];
-    console.log(args.length);
     var names = 'graph for';
     for(var i = 1; i < args.length; i++){
       names += ' ' + args[i];
